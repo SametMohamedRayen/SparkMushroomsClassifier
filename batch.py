@@ -6,8 +6,8 @@ from pyspark.sql import SparkSession
 
 def prediction_to_string(pred_double):
     if pred_double == 1.0:
-        return "poisonous"
-    return "edible"
+        return "p"
+    return "e"
 
 
 # Create a SparkSession
@@ -52,3 +52,6 @@ labelConverter = IndexToString(inputCol="prediction", outputCol="predictedLabel"
 predictions = labelConverter.transform(predictions)
 # Print the predicted target values for the new data
 predictions.select("predictedLabel").show()
+for row in predictions.collect():
+    predicted_class = prediction_to_string(row["prediction"])
+new_data.write.mode("append").option("delimiter", ",").csv("mushrooms.csv")
